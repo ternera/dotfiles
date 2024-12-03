@@ -4,12 +4,14 @@ These are customization files for my system. You are free to use them, but pleas
 
 ## Installation:
 ```bash
-bash -c "`curl -fsSL https://raw.githubusercontent.com/webpro/dotfiles/master/remote-install.sh`"```
+bash -c "`curl -fsSL https://raw.githubusercontent.com/webpro/dotfiles/master/remote-install.sh`"
+```
 
 or if git is installed:
 
 ```bash
-git clone https://github.com/webpro/dotfiles.git ~/.dotfiles```
+git clone https://github.com/webpro/dotfiles.git ~/.dotfiles
+```
 
 Run the Makfile.
 
