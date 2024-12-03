@@ -4,7 +4,7 @@ These are customization files for my system. You are free to use them, but pleas
 
 ## Installation:
 ```bash
-bash -c "`curl -fsSL https://raw.githubusercontent.com/webpro/dotfiles/master/remote-install.sh`"
+bash -c "`curl -fsSL https://raw.githubusercontent.com/ternera/dotfiles/master/remote-install.sh`"
 ```
 
 or if git is installed:
