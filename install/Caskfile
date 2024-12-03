@@ -1,13 +1,20 @@
-visual-studio-code
-tmux
-node
-git
-gh
-the-unarchiver
-discord
-signal
-zoom
-spotify
-obs
-steam
-epic-games
+cask "tmux"
+cask "node"
+cask "git"
+cask "gh"
+cask "the-unarchiver"
+cask "discord"
+cask "docker"
+cask "proton-drive"
+cask "firefox"
+cask "signal@beta"
+cask "zoom"
+cask "spotify"
+cask "google-chrome"
+cask "arc"
+cask "obs"
+cask "raycast"
+cask "steam"
+cask "spotify"
+cask "visual-studio-code"
+cask "epic-games"
