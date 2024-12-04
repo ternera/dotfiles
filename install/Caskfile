@@ -7,7 +7,7 @@ cask "discord"
 cask "docker"
 cask "proton-drive"
 cask "firefox"
-cask "signal@beta"z
+cask "signal@beta"
 cask "zoom"
 cask "spotify"
 cask "google-chrome"
