@@ -1,6 +1,6 @@
 cask "kitty"
 cask "the-unarchiver"
-cask "discord"
+cask "discord@canary"
 cask "docker"
 cask "proton-drive"
 cask "firefox"
