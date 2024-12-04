@@ -1,7 +1,4 @@
-cask "tmux"
-cask "node"
-cask "git"
-cask "gh"
+cask "kitty"
 cask "the-unarchiver"
 cask "discord"
 cask "docker"
