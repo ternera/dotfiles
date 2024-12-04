@@ -20,6 +20,12 @@ cd ~/.dotfiles
 make
 ```
 
+If you encouter issues running the command above, try:
+
+```bash
+make --debug=v
+```
+
 ## Post-Installation
 - Set your Git credentials:
 ```bash
