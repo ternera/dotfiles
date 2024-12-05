@@ -21,6 +21,12 @@ chmod +x install.sh
 ./install.sh
 ```
 
+If you run into issues, edit the `install.sh` script and add the following line towards the beginning to troubleshoot:
+
+```bash
+set -x
+```
+
 ## Post-Installation
 - Set your Git credentials:
 ```bash
