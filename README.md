@@ -4,26 +4,21 @@ These are customization files for my system. You are free to use them, but pleas
 
 ## Installation:
 ```bash
-bash -c "`curl -fsSL https://raw.githubusercontent.com/ternera/dotfiles/master/remote-install.sh`"
+bash -c "`curl -fsSL https://raw.githubusercontent.com/ternera/dotfiles/master/`"
 ```
 
 or if git is installed:
 
 ```bash
-git clone https://github.com/webpro/dotfiles.git ~/.dotfiles
+git clone https://github.com/ternera/dotfiles.git ~/.dotfiles
 ```
 
 Run the Makfile.
 
 ```bash
 cd ~/.dotfiles
-make
-```
-
-If you encouter issues running the command above, try:
-
-```bash
-make --debug=v
+chmod +x install.sh
+./install.sh
 ```
 
 ## Post-Installation
