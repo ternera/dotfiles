@@ -1,4 +1,5 @@
 #!/bin/bash
+#set -x
 
 # Use the system-native print preview dialog
 defaults write company.thebrowser.Browser DisablePrintPreview -bool true
@@ -12,6 +13,7 @@ defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true
 defaults write company.thebrowser.Browser PasswordManagerEnabled -bool false
 defaults write company.thebrowser.Browser AutofillCreditCardEnabled -bool false
 
+: '
 # Install Chrome Extensions
 
 # Define the Chrome Web Store URL base
@@ -41,3 +43,14 @@ for EXT_ID in "${EXTENSIONS[@]}"; do
     echo "Opening $EXT_URL in Arc..."
     "$ARC_BINARY" "$EXT_URL"
 done
+
+
+declare -A EXTlist=(
+    ["google-translate"]="aapbdbdomjkkjkaonfhkkikfgjllcleb"
+    ["save-to-google-drive"]="gmbmikajjgmnabiglmofipeabaddhgne"
+)
+for i in "${!EXTlist[@]}"; do
+    # echo "Key: $i value: ${EXTlist[$i]}"
+    echo '{"external_update_url": "https://clients2.google.com/service/update2/crx"}' > /opt/google/chrome/extensions/${EXTlist[$i]}.json
+done
+'

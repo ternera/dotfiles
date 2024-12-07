@@ -18,7 +18,7 @@ Run the Makfile.
 ```bash
 cd ~/.dotfiles
 chmod +x install.sh
-./install.sh
+sudo install.sh
 ```
 
 If you run into issues, edit the `install.sh` script and add the following line towards the beginning to troubleshoot:
