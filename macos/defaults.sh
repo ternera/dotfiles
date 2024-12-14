@@ -28,7 +28,7 @@ defaults write NSGlobalDomain AppleMetricUnits -bool true
 
 # Set the time zone
 sudo defaults write /Library/Preferences/com.apple.timezone.auto Active -bool YES
-sudo systemsetup -setusingnetworktime on
+sudo systemsetup -setusingnetworktime on  
 
 # Restart automatically if the computer freezes (Error:-99 can be ignored)
 sudo systemsetup -setrestartfreeze on 2> /dev/null
