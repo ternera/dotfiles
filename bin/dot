@@ -5,6 +5,7 @@ COMMAND_NAME=$1
 SUB_COMMAND_NAME=$2
 
 sub_help () {
+  echo "Dotfiles management script"
   echo "Usage: $BIN_NAME <command>"
   echo
   echo "Commands:"

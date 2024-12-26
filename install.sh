@@ -1,54 +1,91 @@
 #!/bin/bash
 
+# Ensure script is run with sudo privileges and keep sudo alive
+ensure_sudo() {
+    echo "Checking sudo privileges..."
+    if ! sudo -v; then
+        echo "Failed to obtain sudo privileges. Please run script again."
+        exit 1
+    fi
+    
+    # Keep sudo alive in the background
+    (while true; do 
+        sudo -n true
+        sleep 50
+        kill -0 "$$" || exit
+    done 2>/dev/null) &
+    
+    SUDO_KEEP_ALIVE_PID=$!
+    trap 'kill $SUDO_KEEP_ALIVE_PID' EXIT
+}
+
+# Call ensure_sudo before any other operations
+ensure_sudo
+
+# Create timestamp function
+timestamp() {
+  date "+%Y-%m-%d %H:%M:%S"
+}
+
+# Create log directory and file
+LOG_DIR="$HOME/.local/logs"
+LOG_FILE="$LOG_DIR/dotfiles_install_$(date +%Y%m%d_%H%M%S).log"
+mkdir -p "$LOG_DIR"
+touch "$LOG_FILE"
+
+echo "$(timestamp) Starting installation..." | tee -a "$LOG_FILE"
 set -x
-sudo -v
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-# Put my custom scripts in the ~/bin folder and add them to path
-mkdir ~/bin
-cp -R bin/ ~/bin
-chmod +x ~/bin/*
-#export PATH=".:/Users/ternera/bin:$PATH"
-sudo cp install/addtopath /etc/paths.d
+echo "$(timestamp) Setting up bin directory..." | tee -a "$LOG_FILE"
+mkdir ~/bin 2>&1 | tee -a "$LOG_FILE"
+cp -R bin/ ~/bin 2>&1 | tee -a "$LOG_FILE"
+chmod +x ~/bin/* 2>&1 | tee -a "$LOG_FILE"
+sudo cp install/addtopath /etc/paths.d 2>&1 | tee -a "$LOG_FILE"
 
-sudo -u ternera brew instal stow
-mkdir -p $HOME/.config
-stow -t $HOME runcom --adopt
-stow -t $HOME/.config config --adopt
-mkdir -p $HOME/.local/runtime
-chmod 700 $HOME/.local/runtime
+echo "$(timestamp) Configuring stow..." | tee -a "$LOG_FILE"
+sudo -u ternera brew install stow 2>&1 | tee -a "$LOG_FILE"
+mkdir -p $HOME/.config 2>&1 | tee -a "$LOG_FILE"
+stow -t $HOME runcom --adopt 2>&1 | tee -a "$LOG_FILE"
+stow -t $HOME/.config config --adopt 2>&1 | tee -a "$LOG_FILE"
+mkdir -p $HOME/.local/runtime 2>&1 | tee -a "$LOG_FILE"
+chmod 700 $HOME/.local/runtime 2>&1 | tee -a "$LOG_FILE"
 
-stow --delete -t $HOME runcom --adopt
-stow --delete -t $HOME/.config config --adopt
+echo "$(timestamp) Cleaning previous stow configurations..." | tee -a "$LOG_FILE"
+stow --delete -t $HOME runcom --adopt 2>&1 | tee -a "$LOG_FILE"
+stow --delete -t $HOME/.config config --adopt 2>&1 | tee -a "$LOG_FILE"
 
-# Install Homebrew
-curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | bash
+echo "$(timestamp) Installing Homebrew..." | tee -a "$LOG_FILE"
+curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | bash 2>&1 | tee -a "$LOG_FILE"
 
-sudo -u ternera brew install git git-extras
-sudo n install lts
+echo "$(timestamp) Installing git and node..." | tee -a "$LOG_FILE"
+sudo -u ternera brew install git git-extras 2>&1 | tee -a "$LOG_FILE"
+sudo n install lts 2>&1 | tee -a "$LOG_FILE"
 
-sudo -u ternera brew bundle --file=install/Brewfile || true
-# UNCOMMENT THE LINE BELOW ONCE EVERYTHING IS WORKING
-#sudo -u brew bundle --file=install/Caskfile || true
+echo "$(timestamp) Installing Homebrew packages..." | tee -a "$LOG_FILE"
+sudo -u ternera brew bundle --file=install/Brewfile || true 2>&1 | tee -a "$LOG_FILE"
+sudo -u ternera brew bundle --file=install/Caskfile || true 2>&1 | tee -a "$LOG_FILE"
 
-# Install VSCode extensions
+echo "$(timestamp) Installing VSCode extensions..." | tee -a "$LOG_FILE"
 cat install/Codefile | while read -r extension || [[ -n $extension ]]; do
-  code --install-extension "$extension" --force
+  code --install-extension "$extension" --force 2>&1 | tee -a "$LOG_FILE"
 done
 
-#/Users/ternera/.n/bin/npm install --force --location global install/npmfile --verbose
+#echo "$(timestamp) Installing global NPM packages..." | tee -a "$LOG_FILE"
+#/Users/ternera/.n/bin/npm install --force --location global install/npmfile --verbose 2>&1 | tee -a "$LOG_FILE"
 
 # Skip Rust, I think.
-#cargo install install/Rustfile
+#cargo install install/Rustfile 2>&1 | tee -a "$LOG_FILE"
 
-# Use duti to specify default applications for file extensions
-duti -v install/duti
+echo "$(timestamp) Setting default applications..." | tee -a "$LOG_FILE"
+duti -v install/duti 2>&1 | tee -a "$LOG_FILE"
 
-# Set MacOS Defaults
-/bin/bash macos/defaults.sh
+echo "$(timestamp) Configuring MacOS defaults..." | tee -a "$LOG_FILE"
+/bin/bash macos/defaults.sh 2>&1 | tee -a "$LOG_FILE"
 
-# Set Google Chrome Defaults
-/bin/bash macos/defaults-chrome.sh
+echo "$(timestamp) Configuring Chrome defaults..." | tee -a "$LOG_FILE"
+/bin/bash macos/defaults-chrome.sh 2>&1 | tee -a "$LOG_FILE"
 
-# Setup Kitty
-cp config/kitty/* ~/.config/kitty/
+echo "$(timestamp) Setting up Kitty terminal..." | tee -a "$LOG_FILE"
+cp config/kitty/* ~/.config/kitty/ 2>&1 | tee -a "$LOG_FILE"
+
+echo "$(timestamp) Installation complete! Log saved to: $LOG_FILE" | tee -a "$LOG_FILE"

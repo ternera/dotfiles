@@ -1,5 +1,5 @@
 
-source /Users/isaks/.docker/init-fish.sh || true # Added by Docker Desktop
+source /Users/ternera/.docker/init-fish.sh || true # Added by Docker Desktop
 
 thefuck --alias | source
 
