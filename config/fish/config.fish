@@ -1,6 +1,3 @@
-
-source /Users/ternera/.docker/init-fish.sh || true # Added by Docker Desktop
-
-thefuck --alias | source
-
-set -g fish_autosuggestion_enabled 0
+if status is-interactive
+    # Commands to run in interactive sessions can go here
+end

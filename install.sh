@@ -34,7 +34,7 @@ mkdir -p "$LOG_DIR"
 touch "$LOG_FILE"
 
 echo "$(timestamp) Starting installation..." | tee -a "$LOG_FILE"
-set -x
+#set -x
 
 echo "$(timestamp) Setting up bin directory..." | tee -a "$LOG_FILE"
 mkdir ~/bin 2>&1 | tee -a "$LOG_FILE"
@@ -53,6 +53,9 @@ chmod 700 $HOME/.local/runtime 2>&1 | tee -a "$LOG_FILE"
 echo "$(timestamp) Cleaning previous stow configurations..." | tee -a "$LOG_FILE"
 stow --delete -t $HOME runcom --adopt 2>&1 | tee -a "$LOG_FILE"
 stow --delete -t $HOME/.config config --adopt 2>&1 | tee -a "$LOG_FILE"
+
+echo "$(timestamp) Setting up Kitty terminal..." | tee -a "$LOG_FILE"
+cp config/kitty/* ~/.config/kitty/ 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Installing Homebrew..." | tee -a "$LOG_FILE"
 curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | bash 2>&1 | tee -a "$LOG_FILE"
@@ -84,8 +87,5 @@ echo "$(timestamp) Configuring MacOS defaults..." | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Configuring Chrome defaults..." | tee -a "$LOG_FILE"
 /bin/bash macos/defaults-chrome.sh 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Setting up Kitty terminal..." | tee -a "$LOG_FILE"
-cp config/kitty/* ~/.config/kitty/ 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Installation complete! Log saved to: $LOG_FILE" | tee -a "$LOG_FILE"
