@@ -19,7 +19,7 @@ Run the bash script. A log will be created in `~/.local/logs`.
 ```bash
 cd ~/.dotfiles
 chmod +x install.sh
-sudo install.sh   
+./install.sh   
 ```
 
 If you run into issues, edit the `install.sh` script and add the following line towards the beginning to troubleshoot:
