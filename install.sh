@@ -57,6 +57,12 @@ stow --delete -t $HOME/.config config --adopt 2>&1 | tee -a "$LOG_FILE"
 echo "$(timestamp) Setting up Kitty terminal..." | tee -a "$LOG_FILE"
 cp config/kitty/* ~/.config/kitty/ 2>&1 | tee -a "$LOG_FILE"
 
+echo "$(timestamp) Copying zsh aliases..." | tee -a "$LOG_FILE"
+cp config/zsh/.aliases $HOME/.aliases 2>&1 | tee -a "$LOG_FILE"
+
+echo "$(timestamp) Copying zsh configuration..." | tee -a "$LOG_FILE"
+cp -f config/zsh/.zshrc $HOME/.zshrc 2>&1 | tee -a "$LOG_FILE"
+
 echo "$(timestamp) Installing Homebrew..." | tee -a "$LOG_FILE"
 curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | bash 2>&1 | tee -a "$LOG_FILE"
 
@@ -72,6 +78,21 @@ echo "$(timestamp) Installing VSCode extensions..." | tee -a "$LOG_FILE"
 cat install/Codefile | while read -r extension || [[ -n $extension ]]; do
   code --install-extension "$extension" --force 2>&1 | tee -a "$LOG_FILE"
 done
+
+echo "$(timestamp) Installing latest Ruby with rbenv..." | tee -a "$LOG_FILE"
+sudo -u ternera rbenv install $(rbenv install -l | grep -v - | tail -1) 2>&1 | tee -a "$LOG_FILE"
+LATEST_RUBY=$(rbenv install -l | grep -v - | tail -1)
+sudo -u ternera rbenv global $LATEST_RUBY 2>&1 | tee -a "$LOG_FILE"
+
+echo "$(timestamp) Configuring Kitty to use the latest Ruby version..." | tee -a "$LOG_FILE"
+echo "export PATH=\"$HOME/.rbenv/versions/$LATEST_RUBY/bin:\$PATH\"" >> ~/.config/kitty/kitty.conf
+
+#echo "$(timestamp) Installing gems from Gemfile..." | tee -a "$LOG_FILE"
+#if [ -f Gemfile ]; then
+#  sudo -u ternera bundle install --gemfile=Gemfile 2>&1 | tee -a "$LOG_FILE"
+#else
+#  echo "$(timestamp) No Gemfile found. Skipping gem installation." | tee -a "$LOG_FILE"
+#fi
 
 #echo "$(timestamp) Installing global NPM packages..." | tee -a "$LOG_FILE"
 #/Users/ternera/.n/bin/npm install --force --location global install/npmfile --verbose 2>&1 | tee -a "$LOG_FILE"

@@ -1,0 +1,11 @@
+#git
+
+alias pull="git pull"
+alias push="git push"
+alias jekdep="bundle exec jekyll serve"
+alias aliases="cat ~/.aliases"
+alias zshrc="${=EDITOR} ${ZDOTDIR:-$HOME}/.zshrc"
+alias t="tail -f"
+alias h="history"
+alias arc="open -a Arc"
+alias localhost="open -u http://localhost -p"
