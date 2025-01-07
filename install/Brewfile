@@ -17,6 +17,7 @@ brew "yarn"
 brew "mackup"
 brew "mas"
 brew "rbenv"
+brew "pnpm"
 
 #needed for ladybird
 brew "autoconf"
