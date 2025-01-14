@@ -18,6 +18,7 @@ brew "mackup"
 brew "mas"
 brew "rbenv"
 brew "pnpm"
+brew "http-server"
 
 #needed for ladybird
 #brew "autoconf"

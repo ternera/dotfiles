@@ -1,6 +1,9 @@
 #!/bin/bash
 #set -x
 
+# Enable secure DNS
+defaults write company.thebrowser.Browser DnsOverHttpsMode -string "secure"
+
 # Use the system-native print preview dialog
 defaults write company.thebrowser.Browser DisablePrintPreview -bool true
 defaults write com.google.Chrome DisablePrintPreview -bool true
@@ -36,6 +39,7 @@ EXTENSIONS=(
     "kdbmhfkmnlmbkgbabkdealhhbfhlmmon"  # SteamDB
     "cbghhgpcnddeihccjmnadmkaejncjndb"  # Vencord Web
     "cjpalhdlnbpafiamejdnhcphjbkeiagm"  # uBlock Origin
+    "nmkinhboiljjkhaknpaeaicmdjhagpep"  # Fluff Busting Purity
 
 # Loop through the list and open each extension in Arc
 for EXT_ID in "${EXTENSIONS[@]}"; do
