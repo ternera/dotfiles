@@ -16,6 +16,11 @@ defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true
 defaults write company.thebrowser.Browser PasswordManagerEnabled -bool false
 defaults write company.thebrowser.Browser AutofillCreditCardEnabled -bool false
 
+# Keep Google safe search enabled all the time
+defaults write company.thebrowser.Browser GoogleSafeSearch -int 1
+defaults write company.thebrowser.Browser ForceBingSafeSearch -int 2
+
+
 : '
 # Install Chrome Extensions
 
