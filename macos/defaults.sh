@@ -209,6 +209,13 @@ defaults write com.apple.commerce AutoUpdate -bool true
 #defaults write com.apple.commerce AutoUpdateRestartRequired -bool true
 
 ###############################################################################
+# Desktop & Screen Saver                                                      #
+###############################################################################
+
+# Set desktop wallpaper
+osascript -e 'tell application "Finder" to set desktop picture to POSIX file "'"${HOME}/bin/Karina Formanova Cover.gif"'"'
+
+###############################################################################
 # Kill affected applications                                                  #
 ###############################################################################
 
