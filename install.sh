@@ -103,6 +103,9 @@ echo "export PATH=\"$HOME/.rbenv/versions/$LATEST_RUBY/bin:\$PATH\"" >> ~/.confi
 echo "$(timestamp) Setting default applications..." | tee -a "$LOG_FILE"
 duti -v install/duti 2>&1 | tee -a "$LOG_FILE"
 
+echo "$(timestamp) Configuring hosts file..." | tee -a "$LOG_FILE"
+echo "127.0.0.1 screen.studio" | sudo tee -a /etc/hosts 2>&1 | tee -a "$LOG_FILE"
+
 echo "$(timestamp) Configuring MacOS defaults..." | tee -a "$LOG_FILE"
 /bin/bash macos/defaults.sh 2>&1 | tee -a "$LOG_FILE"
 
