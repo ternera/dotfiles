@@ -19,6 +19,7 @@ brew "mas"
 brew "rbenv"
 brew "pnpm"
 brew "http-server"
+brew "neofetch"
 
 #needed for ladybird
 #brew "autoconf"
