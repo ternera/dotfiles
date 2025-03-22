@@ -233,7 +233,7 @@ defaults write com.apple.commerce AutoUpdate -bool true
 ###############################################################################
 
 # Set desktop wallpaper
-osascript -e 'tell application "Finder" to set desktop picture to POSIX file "'"${HOME}/bin/Karina Formanova Cover.gif"'"'
+osascript -e 'tell application "Finder" to set desktop picture to POSIX file "'"${HOME}/bin/wallpaper1280x853.jpeg"'"'
 
 ###############################################################################
 # Kill affected applications                                                  #
