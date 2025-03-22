@@ -72,7 +72,8 @@ echo "$(timestamp) Setting up Kitty terminal..." | tee -a "$LOG_FILE"
 cp config/kitty/* ~/.config/kitty/ 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Copying zsh aliases..." | tee -a "$LOG_FILE"
-cp config/zsh/.aliases $HOME/.aliases 2>&1 | tee -a "$LOG_FILE"
+cp -f config/zsh/.aliases $HOME/.aliases 2>&1 | tee -a "$LOG_FILE"
+source ~/.aliases 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Copying zsh configuration..." | tee -a "$LOG_FILE"
 cp -f config/zsh/.zshrc $HOME/.zshrc 2>&1 | tee -a "$LOG_FILE"
