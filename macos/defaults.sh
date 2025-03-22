@@ -235,6 +235,9 @@ defaults write com.apple.commerce AutoUpdate -bool true
 # Set desktop wallpaper
 osascript -e 'tell application "Finder" to set desktop picture to POSIX file "'"${HOME}/bin/wallpaper1280x853.jpeg"'"'
 
+# Set wallpaper to show on all spaces
+defaults write com.apple.spaces spans-displays -bool true
+
 # Force icons to arrange by grid in Finder and on Desktop
 defaults write com.apple.finder ArrangeByGrid -bool true
 defaults write com.apple.finder FXPreferredViewStyle -string "icnv"
