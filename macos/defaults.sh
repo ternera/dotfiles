@@ -20,6 +20,10 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 # Set language and text formats
 defaults write NSGlobalDomain AppleLanguages -array $LANGUAGES
 defaults write NSGlobalDomain AppleLocale -string $LOCALE
+defaults write NSGlobalDomain AppleICUForce24HourTime -bool true
+defaults write com.apple.menuextra.clock DateFormat -string "HH:mm"
+defaults write com.apple.menuextra.clock Show24Hour -bool true
+defaults write com.apple.menuextra.clock IsAnalog -bool false
 #defaults write NSGlobalDomain AppleMeasurementUnits -string "$MEASUREMENT_UNITS"
 defaults write NSGlobalDomain AppleMetricUnits -bool true
 
