@@ -54,7 +54,7 @@ echo "$(timestamp) Setting up bin directory..." | tee -a "$LOG_FILE"
 mkdir ~/bin 2>&1 | tee -a "$LOG_FILE"
 cp -R bin/ ~/bin 2>&1 | tee -a "$LOG_FILE"
 chmod +x ~/bin/* 2>&1 | tee -a "$LOG_FILE"
-sudo cp install/addtopath /etc/paths.d 2>&1 | tee -a "$LOG_FILE"
+sudo cp install/addtopath /etc/paths.d/userbin 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Configuring stow..." | tee -a "$LOG_FILE"
 sudo -u ternera brew install stow 2>&1 | tee -a "$LOG_FILE"
@@ -85,13 +85,28 @@ sudo -u ternera brew install git git-extras 2>&1 | tee -a "$LOG_FILE"
 sudo n install lts 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Installing Homebrew packages..." | tee -a "$LOG_FILE"
-sudo -u ternera brew bundle --file=install/Brewfile || true 2>&1 | tee -a "$LOG_FILE"
-sudo -u ternera brew bundle --file=install/Caskfile || true 2>&1 | tee -a "$LOG_FILE"
+#sudo -u ternera brew bundle --file=install/Brewfile || true 2>&1 | tee -a "$LOG_FILE"
+#sudo -u ternera brew bundle --file=install/Caskfile || true 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Installing VSCode extensions..." | tee -a "$LOG_FILE"
-cat install/Codefile | while read -r extension || [[ -n $extension ]]; do
-  code --install-extension "$extension" --force 2>&1 | tee -a "$LOG_FILE"
-done
+
+if command -v code &> /dev/null; then
+  echo "$(timestamp) Installing extensions for VS Code..." | tee -a "$LOG_FILE"
+  cat install/Codefile | while read -r extension || [[ -n $extension ]]; do
+    code --install-extension "$extension" --force 2>&1 | tee -a "$LOG_FILE"
+  done
+else
+  echo "$(timestamp) Regular VS Code not found, skipping extension installation." | tee -a "$LOG_FILE"
+fi
+
+if command -v code-insiders &> /dev/null; then
+  echo "$(timestamp) Installing extensions for VS Code Insiders..." | tee -a "$LOG_FILE"
+  cat install/Codefile | while read -r extension || [[ -n $extension ]]; do
+    code-insiders --install-extension "$extension" --force 2>&1 | tee -a "$LOG_FILE"
+  done
+else
+  echo "$(timestamp) VS Code Insiders not found, skipping extension installation." | tee -a "$LOG_FILE"
+fi
 
 echo "$(timestamp) Installing latest Ruby with rbenv..." | tee -a "$LOG_FILE"
 sudo -u ternera rbenv install $(rbenv install -l | grep -v - | tail -1) 2>&1 | tee -a "$LOG_FILE"
