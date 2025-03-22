@@ -86,8 +86,8 @@ sudo -u ternera brew install git git-extras 2>&1 | tee -a "$LOG_FILE"
 sudo n install lts 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Installing Homebrew packages..." | tee -a "$LOG_FILE"
-#sudo -u ternera brew bundle --file=install/Brewfile || true 2>&1 | tee -a "$LOG_FILE"
-#sudo -u ternera brew bundle --file=install/Caskfile || true 2>&1 | tee -a "$LOG_FILE"
+sudo -u ternera brew bundle --file=install/Brewfile || true 2>&1 | tee -a "$LOG_FILE"
+sudo -u ternera brew bundle --file=install/Caskfile || true 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Installing VSCode extensions..." | tee -a "$LOG_FILE"
 
