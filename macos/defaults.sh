@@ -34,6 +34,10 @@ defaults write NSGlobalDomain AppleMetricUnits -bool true
 sudo defaults write /Library/Preferences/com.apple.timezone.auto Active -bool YES
 sudo systemsetup -setusingnetworktime on  
 
+# Prevent the screen from sleeping when connected to power
+sudo systemsetup -setdisplaysleep 0
+sudo pmset -c displaysleep 0
+
 # Restart automatically if the computer freezes (Error:-99 can be ignored)
 sudo systemsetup -setrestartfreeze on 2> /dev/null
 
