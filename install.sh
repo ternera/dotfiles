@@ -36,19 +36,11 @@ touch "$LOG_FILE"
 echo "$(timestamp) Starting installation..." | tee -a "$LOG_FILE"
 set -x
 
-
-echo "$(timestamp) Configuring hosts file..." | tee -a "$LOG_FILE"
-echo "" | sudo tee -a /etc/hosts 2>&1 | tee -a "$LOG_FILE"
-echo "127.0.0.1 screen.studio" | sudo tee -a /etc/hosts 2>&1 | tee -a "$LOG_FILE"
-
 echo "$(timestamp) Configuring DNS servers..." | tee -a "$LOG_FILE"
 # Get active network interface (Wi-Fi or Ethernet)
 ACTIVE_INTERFACE=$(networksetup -listallnetworkservices | grep -Eo '(Wi-Fi|Ethernet)')
 # Set OpenDNS FamilyShield servers
 networksetup -setdnsservers "$ACTIVE_INTERFACE" 208.67.222.123 208.67.220.123 2>&1 | tee -a "$LOG_FILE"
-
-
-
 
 echo "$(timestamp) Setting up bin directory..." | tee -a "$LOG_FILE"
 mkdir ~/bin 2>&1 | tee -a "$LOG_FILE"
