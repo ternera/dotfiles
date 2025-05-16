@@ -143,7 +143,12 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict General -bool true Ope
 defaults write com.apple.dock show-process-indicators -bool true
 
 # Automatically hide and show the Dock
-#defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide -bool false
+
+# Enable Dock magnification
+defaults write com.apple.dock magnification -bool true
+
+defaults write com.apple.dock largesize -int 72
 
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
