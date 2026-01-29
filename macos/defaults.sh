@@ -148,7 +148,7 @@ defaults write com.apple.dock show-process-indicators -bool true
 defaults write com.apple.dock autohide -bool false
 
 # Enable Dock magnification
-defaults write com.apple.dock magnification -bool true
+defaults write com.apple.dock magnification -bool false
 
 defaults write com.apple.dock largesize -int 72
 
