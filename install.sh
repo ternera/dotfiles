@@ -101,6 +101,10 @@ else
   echo "$(timestamp) VS Code Insiders not found, skipping extension installation." | tee -a "$LOG_FILE"
 fi
 
+echo "$(timestamp) Copying VS Code settings..." | tee -a "$LOG_FILE"
+mkdir -p "$HOME/Library/Application Support/Code/User" 2>&1 | tee -a "$LOG_FILE"
+cp -f config/vscode/settings.json "$HOME/Library/Application Support/Code/User/settings.json" 2>&1 | tee -a "$LOG_FILE"
+
 echo "$(timestamp) Installing latest Ruby with rbenv..." | tee -a "$LOG_FILE"
 sudo -u ternera rbenv install $(rbenv install -l | grep -v - | tail -1) 2>&1 | tee -a "$LOG_FILE"
 LATEST_RUBY=$(rbenv install -l | grep -v - | tail -1)
@@ -132,7 +136,7 @@ echo "127.0.0.1 screen.studio" | sudo tee -a /etc/hosts 2>&1 | tee -a "$LOG_FILE
 echo "$(timestamp) Configuring DNS servers..." | tee -a "$LOG_FILE"
 # Get active network interface (Wi-Fi or Ethernet)
 ACTIVE_INTERFACE=$(networksetup -listallnetworkservices | grep -Eo '(Wi-Fi|Ethernet)')
-# Set OpenDNS FamilyShield servers
+# Set DNS servers
 networksetup -setdnsservers "$ACTIVE_INTERFACE" 208.67.222.123 208.67.220.123 2>&1 | tee -a "$LOG_FILE"
 
 echo "$(timestamp) Configuring MacOS defaults..." | tee -a "$LOG_FILE"
