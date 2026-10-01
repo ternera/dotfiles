@@ -270,5 +270,5 @@ defaults write com.apple.finder FXPreferredIconViewSettings -dict-add arrangeBy 
 ###############################################################################
 
 for app in "Address Book" "Calendar" "Contacts" "Dock" "Finder" "Mail" "Safari" "SystemUIServer" "iCal"; do
-  killall "${app}" &> /dev/null
+  killall "${app}" &> /dev/null || true
 done

@@ -1,148 +1,88 @@
 #!/bin/bash
+set -euo pipefail
 
-# Ensure script is run with sudo privileges and keep sudo alive
-ensure_sudo() {
-    echo "Checking sudo privileges..."
-    if ! sudo -v; then
-        echo "Failed to obtain sudo privileges. Please run script again."
-        exit 1
-    fi
-    
-    # Keep sudo alive in the background
-    (while true; do 
-        sudo -n true
-        sleep 50
-        kill -0 "$$" || exit
-    done 2>/dev/null) &
-    
-    SUDO_KEEP_ALIVE_PID=$!
-    trap 'kill $SUDO_KEEP_ALIVE_PID' EXIT
-}
+# run homebrew natively
+if [[ "$(sysctl -n hw.optional.arm64 2>/dev/null || echo 0)" == 1 && "$(uname -m)" != arm64 ]]; then
+  exec arch -arm64 /bin/bash "$0" "$@"
+fi
 
-# Call ensure_sudo before any other operations
-ensure_sudo
+cd "$(dirname "$0")"
+DOTFILES_DIR="$PWD"
 
-# Create timestamp function
-timestamp() {
-  date "+%Y-%m-%d %H:%M:%S"
-}
-
-# Create log directory and file
 LOG_DIR="$HOME/.local/logs"
 LOG_FILE="$LOG_DIR/dotfiles_install_$(date +%Y%m%d_%H%M%S).log"
 mkdir -p "$LOG_DIR"
-touch "$LOG_FILE"
+exec > >(tee -a "$LOG_FILE") 2>&1
 
-echo "$(timestamp) Starting installation..." | tee -a "$LOG_FILE"
-set -x
+log() { echo "$(date '+%Y-%m-%d %H:%M:%S') $*"; }
 
-echo "$(timestamp) Configuring DNS servers..." | tee -a "$LOG_FILE"
-# Get active network interface (Wi-Fi or Ethernet)
-ACTIVE_INTERFACE=$(networksetup -listallnetworkservices | grep -Eo '(Wi-Fi|Ethernet)')
-# Set OpenDNS FamilyShield servers
-networksetup -setdnsservers "$ACTIVE_INTERFACE" 208.67.222.123 208.67.220.123 2>&1 | tee -a "$LOG_FILE"
+link() {
+  mkdir -p "$(dirname "$2")"
+  if [[ -e "$2" && ! -L "$2" ]]; then mv "$2" "$2.bak"; fi
+  ln -sfn "$1" "$2"
+}
 
-echo "$(timestamp) Setting up bin directory..." | tee -a "$LOG_FILE"
-mkdir ~/bin 2>&1 | tee -a "$LOG_FILE"
-cp -R bin/ ~/bin 2>&1 | tee -a "$LOG_FILE"
-chmod +x ~/bin/* 2>&1 | tee -a "$LOG_FILE"
-sudo cp install/addtopath /etc/paths.d/userbin 2>&1 | tee -a "$LOG_FILE"
+log "Starting installation ($(uname -m))..."
 
-echo "$(timestamp) Configuring stow..." | tee -a "$LOG_FILE"
-sudo -u ternera brew install stow 2>&1 | tee -a "$LOG_FILE"
-mkdir -p $HOME/.config 2>&1 | tee -a "$LOG_FILE"
-stow -t $HOME runcom --adopt 2>&1 | tee -a "$LOG_FILE"
-stow -t $HOME/.config config --adopt 2>&1 | tee -a "$LOG_FILE"
-mkdir -p $HOME/.local/runtime 2>&1 | tee -a "$LOG_FILE"
-chmod 700 $HOME/.local/runtime 2>&1 | tee -a "$LOG_FILE"
+sudo -v
+(while true; do sudo -n true; sleep 50; kill -0 "$$" || exit; done 2>/dev/null) &
+trap 'kill $! 2>/dev/null || true' EXIT
 
-echo "$(timestamp) Cleaning previous stow configurations..." | tee -a "$LOG_FILE"
-stow --delete -t $HOME runcom --adopt 2>&1 | tee -a "$LOG_FILE"
-stow --delete -t $HOME/.config config --adopt 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Setting up Kitty terminal..." | tee -a "$LOG_FILE"
-cp config/kitty/* ~/.config/kitty/ 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Copying zsh aliases..." | tee -a "$LOG_FILE"
-cp -f config/zsh/.aliases $HOME/.aliases 2>&1 | tee -a "$LOG_FILE"
-source ~/.aliases 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Copying zsh configuration..." | tee -a "$LOG_FILE"
-cp -f config/zsh/.zshrc $HOME/.zshrc 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Installing Homebrew..." | tee -a "$LOG_FILE"
-curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | bash 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Installing git and node..." | tee -a "$LOG_FILE"
-sudo -u ternera brew install git git-extras 2>&1 | tee -a "$LOG_FILE"
-sudo n install lts 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Installing Homebrew packages..." | tee -a "$LOG_FILE"
-sudo -u ternera brew bundle --file=install/Brewfile || true 2>&1 | tee -a "$LOG_FILE"
-sudo -u ternera brew bundle --file=install/Caskfile || true 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Installing VSCode extensions..." | tee -a "$LOG_FILE"
-
-if command -v code &> /dev/null; then
-  echo "$(timestamp) Installing extensions for VS Code..." | tee -a "$LOG_FILE"
-  cat install/Codefile | while read -r extension || [[ -n $extension ]]; do
-    code --install-extension "$extension" --force 2>&1 | tee -a "$LOG_FILE"
-  done
-else
-  echo "$(timestamp) Regular VS Code not found, skipping extension installation." | tee -a "$LOG_FILE"
+log "Installing Homebrew..."
+if [[ "$(uname -m)" == arm64 ]]; then BREW_PREFIX=/opt/homebrew; else BREW_PREFIX=/usr/local; fi
+if [[ ! -x "$BREW_PREFIX/bin/brew" ]]; then
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+eval "$("$BREW_PREFIX/bin/brew" shellenv)"
+if [[ "$BREW_PREFIX" == /opt/homebrew && -x /usr/local/bin/brew ]]; then
+  log "WARNING: an Intel Homebrew exists at /usr/local. Uninstall it so it can't shadow $BREW_PREFIX."
 fi
 
-if command -v code-insiders &> /dev/null; then
-  echo "$(timestamp) Installing extensions for VS Code Insiders..." | tee -a "$LOG_FILE"
-  cat install/Codefile | while read -r extension || [[ -n $extension ]]; do
-    code-insiders --install-extension "$extension" --force 2>&1 | tee -a "$LOG_FILE"
-  done
+log "Installing Homebrew packages..."
+brew bundle --file=install/Brewfile || log "Some formulae failed to install."
+brew bundle --file=install/Caskfile || log "Some casks failed to install."
+
+log "Linking dotfiles..."
+[[ "$DOTFILES_DIR" == "$HOME/.dotfiles" ]] || link "$DOTFILES_DIR" "$HOME/.dotfiles"
+link "$DOTFILES_DIR/bin" "$HOME/bin"
+find bin -type f ! -name '*.*' -exec chmod +x {} +
+for dir in fish git kitty nvim; do
+  link "$DOTFILES_DIR/config/$dir" "$HOME/.config/$dir"
+done
+link "$DOTFILES_DIR/config/zsh/.zshrc" "$HOME/.zshrc"
+link "$DOTFILES_DIR/config/zsh/.aliases" "$HOME/.aliases"
+link "$DOTFILES_DIR/config/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+
+log "Installing VS Code extensions..."
+CODE_BIN="$(command -v code || true)"
+VSCODE_CLI="/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+if [[ -z "$CODE_BIN" && -x "$VSCODE_CLI" ]]; then CODE_BIN="$VSCODE_CLI"; fi
+if [[ -n "$CODE_BIN" ]]; then
+  while read -r extension || [[ -n "$extension" ]]; do
+    [[ -n "$extension" ]] && { "$CODE_BIN" --install-extension "$extension" --force || log "Failed: $extension"; }
+  done < install/Codefile
 else
-  echo "$(timestamp) VS Code Insiders not found, skipping extension installation." | tee -a "$LOG_FILE"
+  log "VS Code not found, skipping extensions."
 fi
 
-echo "$(timestamp) Copying VS Code settings..." | tee -a "$LOG_FILE"
-mkdir -p "$HOME/Library/Application Support/Code/User" 2>&1 | tee -a "$LOG_FILE"
-cp -f config/vscode/settings.json "$HOME/Library/Application Support/Code/User/settings.json" 2>&1 | tee -a "$LOG_FILE"
+log "Setting default applications..."
+duti -v install/duti
 
-echo "$(timestamp) Installing latest Ruby with rbenv..." | tee -a "$LOG_FILE"
-sudo -u ternera rbenv install $(rbenv install -l | grep -v - | tail -1) 2>&1 | tee -a "$LOG_FILE"
-LATEST_RUBY=$(rbenv install -l | grep -v - | tail -1)
-sudo -u ternera rbenv global $LATEST_RUBY 2>&1 | tee -a "$LOG_FILE"
+log "Configuring hosts file..."
+if ! grep -q "screen.studio" /etc/hosts; then
+  echo "127.0.0.1 screen.studio" | sudo tee -a /etc/hosts >/dev/null
+fi
 
-echo "$(timestamp) Configuring Kitty to use the latest Ruby version..." | tee -a "$LOG_FILE"
-echo "export PATH=\"$HOME/.rbenv/versions/$LATEST_RUBY/bin:\$PATH\"" >> ~/.config/kitty/kitty.conf
+log "Configuring macOS defaults..."
+/bin/bash macos/defaults.sh
+/bin/bash macos/defaults-chrome.sh
 
-#echo "$(timestamp) Installing gems from Gemfile..." | tee -a "$LOG_FILE"
-#if [ -f Gemfile ]; then
-#  sudo -u ternera bundle install --gemfile=Gemfile 2>&1 | tee -a "$LOG_FILE"
-#else
-#  echo "$(timestamp) No Gemfile found. Skipping gem installation." | tee -a "$LOG_FILE"
-#fi
+# familyshield dns
+log "Configuring DNS (OpenDNS FamilyShield)..."
+for service in "Wi-Fi" "Ethernet"; do
+  if networksetup -listallnetworkservices | grep -qx "$service"; then
+    sudo networksetup -setdnsservers "$service" 208.67.222.123 208.67.220.123
+  fi
+done
 
-#echo "$(timestamp) Installing global NPM packages..." | tee -a "$LOG_FILE"
-#/Users/ternera/.n/bin/npm install --force --location global install/npmfile --verbose 2>&1 | tee -a "$LOG_FILE"
-
-# Skip Rust, I think.
-#cargo install install/Rustfile 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Setting default applications..." | tee -a "$LOG_FILE"
-duti -v install/duti 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Configuring hosts file..." | tee -a "$LOG_FILE"
-echo "" | sudo tee -a /etc/hosts 2>&1 | tee -a "$LOG_FILE"
-echo "127.0.0.1 screen.studio" | sudo tee -a /etc/hosts 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Configuring DNS servers..." | tee -a "$LOG_FILE"
-# Get active network interface (Wi-Fi or Ethernet)
-ACTIVE_INTERFACE=$(networksetup -listallnetworkservices | grep -Eo '(Wi-Fi|Ethernet)')
-# Set DNS servers
-networksetup -setdnsservers "$ACTIVE_INTERFACE" 208.67.222.123 208.67.220.123 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Configuring MacOS defaults..." | tee -a "$LOG_FILE"
-/bin/bash macos/defaults.sh 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Configuring Chrome defaults..." | tee -a "$LOG_FILE"
-/bin/bash macos/defaults-chrome.sh 2>&1 | tee -a "$LOG_FILE"
-
-echo "$(timestamp) Installation complete! Log saved to: $LOG_FILE" | tee -a "$LOG_FILE"
+log "Installation complete! Log saved to: $LOG_FILE"
