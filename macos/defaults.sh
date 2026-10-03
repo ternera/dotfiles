@@ -247,8 +247,8 @@ defaults write com.apple.commerce AutoUpdate -bool true
 # Desktop & Screen Saver                                                      #
 ###############################################################################
 
-# Set desktop wallpaper
-osascript -e 'tell application "Finder" to set desktop picture to POSIX file "'"${HOME}/bin/wallpaper1280x853.jpeg"'"'
+# Set solid black wallpaper
+desktoppr color 000000
 
 # Set wallpaper to show on all spaces
 defaults write com.apple.spaces spans-displays -bool true

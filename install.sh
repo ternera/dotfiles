@@ -78,10 +78,10 @@ log "Configuring macOS defaults..."
 /bin/bash macos/defaults-chrome.sh
 
 # familyshield dns
-log "Configuring DNS (OpenDNS FamilyShield)..."
+log "Configuring DNS servers..."
 for service in "Wi-Fi" "Ethernet"; do
   if networksetup -listallnetworkservices | grep -qx "$service"; then
-    sudo networksetup -setdnsservers "$service" 208.67.222.123 208.67.220.123
+    sudo networksetup -setdnsservers "$service" 1.1.1.1 8.8.8.8
   fi
 done
 
