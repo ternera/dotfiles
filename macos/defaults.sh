@@ -247,7 +247,9 @@ defaults write com.apple.commerce AutoUpdate -bool true
 # Desktop & Screen Saver                                                      #
 ###############################################################################
 
-# Set solid black wallpaper
+# Set solid black wallpaper (color alone is hidden behind any existing picture)
+desktoppr "/System/Library/Desktop Pictures/Solid Colors/Black.png"
+sleep 1
 desktoppr color 000000
 
 # Set wallpaper to show on all spaces
