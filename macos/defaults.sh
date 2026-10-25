@@ -1,4 +1,4 @@
-COMPUTER_NAME="ternera"
+COMPUTER_NAME="mac"
 LANGUAGES=(en)
 LOCALE="en_US@currency=USD"
 SCREENSHOTS_FOLDER="${HOME}/Desktop"
