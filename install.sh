@@ -49,6 +49,7 @@ find bin -type f ! -name '*.*' -exec chmod +x {} +
 for dir in fish git kitty nvim; do
   link "$DOTFILES_DIR/config/$dir" "$HOME/.config/$dir"
 done
+[[ -f "$HOME/.zprofile" ]] && mv "$HOME/.zprofile" "$HOME/.zprofile.bak"
 link "$DOTFILES_DIR/config/zsh/.zshrc" "$HOME/.zshrc"
 link "$DOTFILES_DIR/config/zsh/.aliases" "$HOME/.aliases"
 link "$DOTFILES_DIR/config/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
