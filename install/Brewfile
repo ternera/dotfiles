@@ -18,6 +18,7 @@ brew "mas"
 brew "rbenv"
 brew "pnpm"
 brew "http-server"
+brew "testdisk"
 
 #needed for ladybird
 #brew "autoconf"
