@@ -78,7 +78,6 @@ log "Configuring macOS defaults..."
 /bin/bash macos/defaults.sh
 /bin/bash macos/defaults-firefox.sh
 
-# familyshield dns
 log "Configuring DNS servers..."
 for service in "Wi-Fi" "Ethernet"; do
   if networksetup -listallnetworkservices | grep -qx "$service"; then
