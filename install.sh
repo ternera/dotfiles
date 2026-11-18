@@ -76,7 +76,7 @@ fi
 
 log "Configuring macOS defaults..."
 /bin/bash macos/defaults.sh
-/bin/bash macos/defaults-chrome.sh
+/bin/bash macos/defaults-firefox.sh
 
 # familyshield dns
 log "Configuring DNS servers..."
