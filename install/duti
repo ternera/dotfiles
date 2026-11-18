@@ -1,3 +1,10 @@
+app.zen-browser.zen .htm all
+app.zen-browser.zen .html all
+app.zen-browser.zen .mht all
+app.zen-browser.zen .mhtml all
+app.zen-browser.zen .shtml all
+app.zen-browser.zen .xht all
+app.zen-browser.zen .xhtml all
 com.microsoft.VSCode .alias editor
 com.microsoft.VSCode .astro editor
 com.microsoft.VSCode .bash editor
